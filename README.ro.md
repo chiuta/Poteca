@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.0.0 · **Ultima actualizare:** 2026-10-14
+**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -18,6 +18,7 @@ Captura arată datele demonstrative sintetice („Încarcă exemplu”), generat
 
 1. **Deschide fișiere** (sau trage-le în pagină): mai multe fișiere deodată. Jurnalul de import spune ce s-a citit, ce s-a ignorat și de ce.
 2. Fila **Trasee**: vizibilitate, culoare, nume, ștergere. **Statistici**: valorile, diferența dintre urcarea netezită și cea brută, tabelul de ture (km sau mile) și tabelul de segmente. Parametrii (netezire, prag de urcare, prag de oprire) se pot modifica.
+   **Analiză (2.0)**: estimare orientativă a duratei după regula lui Naismith (viteză pe orizontală + timp la urcare; corecție Langmuir opțională), distribuția pantelor, segmente abrupte (prag și lungime reglabile, cu „Arată” pe profil, waypoint-uri și export CSV) și compararea a două trasee cu profiluri suprapuse. Totul local; sunt estimări, nu prognoze.
 3. **Harta**: roata mouse-ului / ciupire / `+` `−` pentru zoom, tragere sau săgeți pentru deplasare, `0` pentru încadrare. Moduri: navigare, adaugă punct, mută punct, șterge punct, waypoint.
 4. **Profilul**: clic sau săgeți (Shift = pas mare) mută cursorul, sincron cu harta; coloreză după pantă, viteză sau puls; marchează A și B pentru tăiere/extragere/împărțire.
 5. Fila **Editare**: tăiere la interval, împărțire, unire, inversare, simplificare Douglas–Peucker (cu numărul de puncte rezultat afișat în prealabil), eliminarea săriturilor GPS, decalaj de timp, comparare a două trasee.
