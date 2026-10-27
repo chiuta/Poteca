@@ -2,11 +2,13 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.0.0 · **Last updated:** 2026-10-26
+**Version:** 2.1.0 · **Last updated:** 2026-10-27
+
+**Status:** stable · **Offline:** complete; needs internet only for the optional OpenStreetMap map (off by default)
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca opens GPX, GeoJSON, KML and CSV tracks, displays them on a local map (no base map), computes statistics (distance, ascent/descent, moving and stopped time, speeds, gradients, laps per kilometre/mile), shows an interactive elevation profile synchronised with the map, and lets you edit tracks (trim, split, merge, reverse, simplify, remove GPS jumps, manual points, waypoints) and export them. Everything runs in the browser, offline.
+Poteca opens GPX, GeoJSON, KML and CSV tracks, displays them on a local map (no base map by default), computes statistics (distance, ascent/descent, moving and stopped time, speeds, gradients, laps per kilometre/mile), shows an interactive elevation profile synchronised with the map, and lets you edit tracks (trim, split, merge, reverse, simplify, remove GPS jumps, manual points, waypoints) and export them. Everything runs in the browser, offline.
 
 ![screenshot](screenshot.en.png)
 
@@ -27,7 +29,7 @@ The screenshot shows synthetic demo data ("Load example"), generated locally; th
 
 ## What it does NOT do, and limits
 
-- **No base map.** It downloads no tiles (no network). You only see the tracks, the adaptive grid, the scale bar and the layers you load yourself.
+- **No base map by default.** It downloads no tiles unless you turn on the optional OpenStreetMap map (see below). You only see the tracks, the adaptive grid, the scale bar and the layers you load yourself.
 - Background images: PNG/JPEG/WebP with two control points or a manual bounding box, in the Web Mercator projection; GeoTIFF is **not** read, rotation is not corrected.
 - Ascent statistics depend on smoothing and threshold; the values are estimates (GPS elevation is noisy). Poteca also shows the raw value for comparison.
 - Distance is haversine (sphere R = 6,371,008.8 m); Vincenty (WGS84) is optional and may differ by up to ~0.3%.
@@ -40,7 +42,7 @@ The screenshot shows synthetic demo data ("Load example"), generated locally; th
 
 ## Privacy
 
-It runs locally and sends nothing. The CSP blocks every network connection (`connect-src 'none'`). Your files never leave the device. Only the session (localStorage/IndexedDB, keys prefixed `fff.poteca.`) and the preferences (language, theme) are saved locally. "Delete all" removes everything. The privacy zone cuts the beginning and end of the track on export (e.g. so as not to reveal your home address).
+It runs locally and sends nothing. The CSP blocks every network connection (`connect-src 'none'`); the only exception is `img-src` for tile.openstreetmap.org, used ONLY if you manually turn on the optional OpenStreetMap map (off by default). Your files never leave the device. Only the session (localStorage/IndexedDB, keys prefixed `fff.poteca.`) and the preferences (language, theme) are saved locally. "Delete all" removes everything. The privacy zone cuts the beginning and end of the track on export (e.g. so as not to reveal your home address).
 
 ## Supported formats
 
@@ -64,6 +66,21 @@ The interface has 8 languages: Romanian (default) and English, written by the au
 
 MIT — see the `LICENSE` file in the repository root.
 
+## Optional OpenStreetMap base map
+
+In the **Layers** tab there is the **Show the OpenStreetMap map** checkbox.
+
+- **Off by default** and **not saved**: every time you open the app it is off again. Turning it on requires an explicit confirmation.
+- **Network warning:** while it is on, Poteca requests 256×256 px PNG tiles from `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. The OpenStreetMap server sees your IP address, your browser, the page the request came from (Referer) and the tile coordinates (roughly the area and zoom level). **Your tracks, waypoints and files are not sent.**
+- CSP: `connect-src 'none'` is unchanged; only `img-src` gains `https://tile.openstreetmap.org` (also declared in `fff-info`/`app.json`, `egress`). Unless you turn it on, the app makes no request.
+- Shown only in the **Web Mercator** projection and only on screen: **it does not appear in SVG/PNG exports or in print**. Attribution on the map: © OpenStreetMap contributors; data © OpenStreetMap contributors (ODbL). Tile use follows the [OSM Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/): only tiles of the visible area (at most 64), no bulk prefetching; the public server may block requests without a Referer (e.g. when opened from `file://`).
+- With the network blocked or offline, tiles do not appear (an error message is shown); the rest of the app works unchanged.
+
+## Altitude correction from a digital elevation model (DEM): planned
+
+**Not implemented.** Correcting GPS altitude with a DEM (SRTM, Copernicus, etc.) cannot be done offline in a single file without embedding terrain data (tens of MB up to GB) or an additional online service, which would add a second network destination. It stays on the roadmap; meanwhile Poteca shows both the smoothed ascent and the raw value and does not claim accuracy beyond that of the GPS data.
+
 ## History
+- **2.1.0 — 2026-10-27:** **optional OpenStreetMap** base map (off by default, not saved, with confirmation and a network warning; only `img-src` to tile.openstreetmap.org); DEM altitude correction: planned; Status/Offline lines; CHANGELOG.md (previous: v2.0.0).
 
 - 1.0.0 — 2026-10-14: first release.

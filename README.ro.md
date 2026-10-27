@@ -2,11 +2,13 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+
+**Stare:** stabil · **Offline:** complet; cere internet doar pentru harta OpenStreetMap opțională (oprită implicit)
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca deschide trasee GPX, GeoJSON, KML și CSV, le afișează pe o hartă locală (fără hartă de bază), calculează statistici (distanță, urcare/coborâre, timp în mișcare și oprit, viteze, pante, ture pe kilometri/mile), arată un profil de altitudine interactiv sincronizat cu harta și permite editarea traseelor (tăiere, împărțire, unire, inversare, simplificare, eliminarea săriturilor GPS, puncte manuale, waypoint-uri) și exportul lor. Totul rulează în browser, offline.
+Poteca deschide trasee GPX, GeoJSON, KML și CSV, le afișează pe o hartă locală (implicit fără hartă de bază), calculează statistici (distanță, urcare/coborâre, timp în mișcare și oprit, viteze, pante, ture pe kilometri/mile), arată un profil de altitudine interactiv sincronizat cu harta și permite editarea traseelor (tăiere, împărțire, unire, inversare, simplificare, eliminarea săriturilor GPS, puncte manuale, waypoint-uri) și exportul lor. Totul rulează în browser, offline.
 
 ![captură](screenshot.ro.png)
 
@@ -28,7 +30,7 @@ Captura arată datele demonstrative sintetice („Încarcă exemplu”), generat
 
 ## Ce NU face și limitele
 
-- **Nu are hartă de bază.** Nu descarcă nicio dală (fără rețea). Se văd doar traseele, grila adaptivă, bara de scară și ce straturi încarci tu.
+- **Implicit nu are hartă de bază.** Nu descarcă nicio dală decât dacă activezi harta OpenStreetMap opțională (vezi mai jos). Se văd doar traseele, grila adaptivă, bara de scară și ce straturi încarci tu.
 - Imaginile de fundal: PNG/JPEG/WebP cu două puncte de control sau casetă manuală, în proiecția Web Mercator; **nu** se citește GeoTIFF, nu se corectează rotația.
 - Statisticile de urcare depind de netezire și de prag; valorile sunt estimări (altitudinea GPS e zgomotoasă). Poteca arată și valoarea brută pentru comparație.
 - Distanța este haversine (sferă R = 6 371 008,8 m); Vincenty (WGS84) este opțional și poate diferi cu până la ~0,3 %.
@@ -41,7 +43,7 @@ Captura arată datele demonstrative sintetice („Încarcă exemplu”), generat
 
 ## Confidențialitate
 
-Rulează local, nu trimite nimic. CSP-ul blochează orice conexiune de rețea (`connect-src 'none'`). Fișierele tale nu părăsesc dispozitivul. Se salvează local doar sesiunea (localStorage/IndexedDB, chei cu prefixul `fff.poteca.`) și preferințele (limbă, temă). „Șterge tot” elimină tot. Zona de confidențialitate taie începutul și sfârșitul traseului la export (de ex. pentru a nu dezvălui adresa de domiciliu).
+Rulează local, nu trimite nimic. CSP-ul blochează orice conexiune de rețea (`connect-src 'none'`); singura excepție este `img-src` pentru tile.openstreetmap.org, folosită NUMAI dacă activezi manual harta OpenStreetMap opțională (oprită implicit). Fișierele tale nu părăsesc dispozitivul. Se salvează local doar sesiunea (localStorage/IndexedDB, chei cu prefixul `fff.poteca.`) și preferințele (limbă, temă). „Șterge tot” elimină tot. Zona de confidențialitate taie începutul și sfârșitul traseului la export (de ex. pentru a nu dezvălui adresa de domiciliu).
 
 ## Formate acceptate
 
@@ -65,6 +67,21 @@ Interfața are 8 limbi: română (implicită) și engleză, scrise de autor; fra
 
 MIT — vezi fișierul `LICENSE` din rădăcina depozitului.
 
+## Hartă de bază OpenStreetMap (opțională)
+
+În fila **Straturi** există caseta **Afișează harta OpenStreetMap**.
+
+- **Oprită implicit** și **nesalvată**: la fiecare deschidere a aplicației este din nou oprită. Activarea cere o confirmare explicită.
+- **Avertisment de rețea:** cât timp e activă, Poteca cere dale PNG de 256×256 px de la `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. Serverul OpenStreetMap vede adresa ta IP, browserul, pagina de pe care s-a cerut (Referer) și coordonatele dalelor (aproximativ zona și nivelul de zoom). **Traseele, waypoint-urile și fișierele tale nu se trimit.**
+- CSP: `connect-src 'none'` rămâne neschimbat; doar `img-src` primește `https://tile.openstreetmap.org` (declarat și în `fff-info`/`app.json`, `egress`). Fără activare, aplicația nu face nicio cerere.
+- Se vede doar în proiecția **Web Mercator** și doar pe ecran: **nu apare în exporturile SVG/PNG și la tipărire**. Atribuire afișată pe hartă: © OpenStreetMap contributors; datele sunt © contribuitorii OpenStreetMap (ODbL). Folosirea dalelor respectă [Politica de utilizare a dalelor OSM](https://operations.osmfoundation.org/policies/tiles/): doar dalele din zona vizibilă (cel mult 64), fără preîncărcare în masă; serverul public poate bloca cereri fără Referer (de ex. la deschiderea din `file://`).
+- Cu rețea blocată sau offline, dalele nu apar (un mesaj de eroare este afișat); restul aplicației funcționează neschimbat.
+
+## Corecția altitudinii cu un model digital al terenului (DEM): planificat
+
+**Neimplementat.** Corectarea altitudinii GPS cu un DEM (SRTM, Copernicus etc.) nu se poate face offline într-un singur fișier fără a încorpora date de teren (zeci de MB până la GB) sau fără un serviciu online suplimentar, ceea ce ar adăuga o a doua destinație de rețea. Rămâne în planul de dezvoltare; între timp, Poteca arată urcarea netezită și valoarea brută și nu pretinde precizie peste cea a datelor GPS.
+
 ## Istoric
+- **2.1.0 — 2026-10-27:** hartă de bază **OpenStreetMap opțională** (oprită implicit, nesalvată, cu confirmare și avertisment de rețea; doar `img-src` către tile.openstreetmap.org); corecția altitudinii cu DEM: planificat; linii Stare/Offline; CHANGELOG.md (anterior: v2.0.0).
 
 - 1.0.0 — 2026-10-14: prima versiune.

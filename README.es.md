@@ -2,11 +2,13 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · **Español** · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versión:** 2.0.0 · **Última actualización:** 2026-10-26
+**Versión:** 2.1.0 · **Última actualización:** 2026-10-27
+
+**Estado:** estable · **Sin conexión:** completo; requiere internet solo para el mapa opcional de OpenStreetMap (desactivado por defecto)
 
 Idiomas de la interfaz: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca abre rutas GPX, GeoJSON, KML y CSV, las muestra en un mapa local (sin mapa base), calcula estadísticas (distancia, ascenso/descenso, tiempo en movimiento y parado, velocidades, pendientes, vueltas por kilómetro/milla), presenta un perfil de elevación interactivo sincronizado con el mapa y permite editar las rutas (recortar, dividir, unir, invertir, simplificar, eliminar saltos GPS, puntos manuales, waypoints) y exportarlas. Todo se ejecuta en el navegador, sin conexión.
+Poteca abre rutas GPX, GeoJSON, KML y CSV, las muestra en un mapa local (por defecto sin mapa base), calcula estadísticas (distancia, ascenso/descenso, tiempo en movimiento y parado, velocidades, pendientes, vueltas por kilómetro/milla), presenta un perfil de elevación interactivo sincronizado con el mapa y permite editar las rutas (recortar, dividir, unir, invertir, simplificar, eliminar saltos GPS, puntos manuales, waypoints) y exportarlas. Todo se ejecuta en el navegador, sin conexión.
 
 ![captura de pantalla](screenshot.es.png)
 
@@ -27,7 +29,7 @@ La captura muestra datos de demostración sintéticos («Cargar ejemplo»), gene
 
 ## Lo que NO hace, y límites
 
-- **No tiene mapa base.** No descarga ninguna tesela (sin red). Solo se ven las rutas, la cuadrícula adaptativa, la barra de escala y las capas que cargues tú.
+- **Sin mapa base por defecto.** No descarga ninguna tesela salvo que actives el mapa opcional de OpenStreetMap (véase más abajo). Solo se ven las rutas, la cuadrícula adaptativa, la barra de escala y las capas que cargues tú.
 - Imágenes de fondo: PNG/JPEG/WebP con dos puntos de control o recuadro manual, en proyección Web Mercator; el GeoTIFF **no** se lee, la rotación no se corrige.
 - Las estadísticas de ascenso dependen del suavizado y del umbral; los valores son estimaciones (la altitud GPS es ruidosa). Poteca muestra también el valor bruto para comparar.
 - La distancia es haversine (esfera R = 6 371 008,8 m); Vincenty (WGS84) es opcional y puede diferir hasta ~0,3 %.
@@ -40,7 +42,7 @@ La captura muestra datos de demostración sintéticos («Cargar ejemplo»), gene
 
 ## Privacidad
 
-Se ejecuta en local y no envía nada. La CSP bloquea cualquier conexión de red (`connect-src 'none'`). Tus archivos no salen del dispositivo. Solo se guardan en local la sesión (localStorage/IndexedDB, claves con el prefijo `fff.poteca.`) y las preferencias (idioma, tema). «Borrar todo» lo elimina todo. La zona de privacidad recorta el comienzo y el final de la ruta al exportar (p. ej., para no revelar la dirección de tu domicilio).
+Se ejecuta en local y no envía nada. La CSP bloquea cualquier conexión de red (`connect-src 'none'`); la única excepción es `img-src` para tile.openstreetmap.org, usada SOLO si activas manualmente el mapa opcional de OpenStreetMap (desactivado por defecto). Tus archivos no salen del dispositivo. Solo se guardan en local la sesión (localStorage/IndexedDB, claves con el prefijo `fff.poteca.`) y las preferencias (idioma, tema). «Borrar todo» lo elimina todo. La zona de privacidad recorta el comienzo y el final de la ruta al exportar (p. ej., para no revelar la dirección de tu domicilio).
 
 ## Formatos admitidos
 
@@ -64,6 +66,21 @@ La interfaz tiene 8 idiomas: rumano (predeterminado) e inglés, escritos por el 
 
 MIT — véase el archivo `LICENSE` en la raíz del repositorio.
 
+## Mapa base de OpenStreetMap (opcional)
+
+En la pestaña **Capas** está la casilla **Mostrar el mapa de OpenStreetMap**.
+
+- **Desactivado por defecto** y **sin guardar**: cada vez que abres la app vuelve a estar apagado. Activarlo requiere una confirmación explícita.
+- **Aviso de red:** mientras está activo, Poteca pide teselas PNG de 256×256 px a `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. El servidor de OpenStreetMap ve tu dirección IP, tu navegador, la página desde la que se pide (Referer) y las coordenadas de las teselas (aproximadamente la zona y el nivel de zoom). **Tus rutas, waypoints y archivos no se envían.**
+- CSP: `connect-src 'none'` no cambia; solo `img-src` recibe `https://tile.openstreetmap.org` (declarado también en `fff-info`/`app.json`, `egress`). Si no lo activas, la app no hace ninguna solicitud.
+- Se ve solo en la proyección **Web Mercator** y solo en pantalla: **no aparece en las exportaciones SVG/PNG ni al imprimir**. Atribución en el mapa: © OpenStreetMap; datos © los colaboradores de OpenStreetMap (ODbL). El uso de teselas sigue la [política de uso de teselas de OSM](https://operations.osmfoundation.org/policies/tiles/): solo las teselas de la zona visible (como máximo 64), sin precarga masiva; el servidor público puede bloquear solicitudes sin Referer (p. ej. al abrir desde `file://`).
+- Sin conexión o con la red bloqueada las teselas no aparecen (se muestra un mensaje de error); el resto de la app funciona igual.
+
+## Corrección de altitud con un modelo digital del terreno (MDT): planificado
+
+**No implementado.** Corregir la altitud GPS con un MDT (SRTM, Copernicus, etc.) no se puede hacer sin conexión en un solo archivo sin incrustar datos del terreno (de decenas de MB a GB) ni usar un servicio en línea adicional, lo que añadiría un segundo destino de red. Queda en la hoja de ruta; mientras tanto, Poteca muestra el ascenso suavizado y el valor bruto y no afirma una precisión superior a la de los datos GPS.
+
 ## Historial
+- **2.1.0 — 2026-10-27:** mapa base **OpenStreetMap opcional** (desactivado por defecto, sin guardar, con confirmación y aviso de red; solo `img-src` hacia tile.openstreetmap.org); corrección de altitud con MDT: planificado; líneas Estado/Sin conexión; CHANGELOG.md (anterior: v2.0.0).
 
 - 1.0.0 — 2026-10-14: primera versión.
