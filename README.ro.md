@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+**Versiune:** 2.2.0 · **Ultima actualizare:** 2026-10-27
 
 **Stare:** stabil · **Offline:** complet; cere internet doar pentru harta OpenStreetMap opțională (oprită implicit)
 
@@ -77,11 +77,14 @@ MIT — vezi fișierul `LICENSE` din rădăcina depozitului.
 - Se vede doar în proiecția **Web Mercator** și doar pe ecran: **nu apare în exporturile SVG/PNG și la tipărire**. Atribuire afișată pe hartă: © OpenStreetMap contributors; datele sunt © contribuitorii OpenStreetMap (ODbL). Folosirea dalelor respectă [Politica de utilizare a dalelor OSM](https://operations.osmfoundation.org/policies/tiles/): doar dalele din zona vizibilă (cel mult 64), fără preîncărcare în masă; serverul public poate bloca cereri fără Referer (de ex. la deschiderea din `file://`).
 - Cu rețea blocată sau offline, dalele nu apar (un mesaj de eroare este afișat); restul aplicației funcționează neschimbat.
 
-## Corecția altitudinii cu un model digital al terenului (DEM): planificat
+## Altitudine din DEM, cu fișiere .hgt furnizate de utilizator (2.2.0)
 
-**Neimplementat.** Corectarea altitudinii GPS cu un DEM (SRTM, Copernicus etc.) nu se poate face offline într-un singur fișier fără a încorpora date de teren (zeci de MB până la GB) sau fără un serviciu online suplimentar, ceea ce ar adăuga o a doua destinație de rețea. Rămâne în planul de dezvoltare; între timp, Poteca arată urcarea netezită și valoarea brută și nu pretinde precizie peste cea a datelor GPS.
+În fila **Editare**, fieldset-ul „Altitudine din DEM (fișiere .hgt de la tine)": încarci tu fișiere **SRTM `.hgt`** (3″ = 2 884 802 B sau 1″ = 25 934 402 B; numele de forma `N45E026.hgt`), descărcate separat. Se citesc local, **nu se salvează** și nu se trimite nimic. „Corectează altitudinea traseului" înlocuiește altitudinea punctelor acoperite cu valoarea interpolată biliniar din DEM (celulele „void" și punctele din afara dalelor rămân neschimbate), se poate anula cu Ctrl+Z și raportează diferența medie DEM − GPS.
+
+**Limite (nu simulate):** Poteca **nu include date de teren** (ar însemna zeci de MB până la GB; nu am putut verifica date încorporate compacte). Precizia verticală este cea a modelului pe care îl furnizezi, nu o putem garanta aici. Testat doar cu dale **sintetice** (`tests/dem.test.mjs`: plan înclinat, interpolare, „void", undo, 8 limbi), nu cu dale SRTM reale. Nu citește GeoTIFF, Copernicus în alt format sau alte rezoluții. Etichetele noi în fr/it/es/pt/hu/de sunt traduceri automate.
 
 ## Istoric
-- **2.1.0 — 2026-10-27:** hartă de bază **OpenStreetMap opțională** (oprită implicit, nesalvată, cu confirmare și avertisment de rețea; doar `img-src` către tile.openstreetmap.org); corecția altitudinii cu DEM: planificat; linii Stare/Offline; CHANGELOG.md (anterior: v2.0.0).
+- **2.2.0 — 2026-10-27:** altitudine din DEM din fișiere SRTM `.hgt` furnizate de utilizator (nimic încorporat; testat doar cu dale sintetice); teste noi `tests/dem.test.mjs`.
+- **2.1.0 — 2026-10-27:** hartă de bază **OpenStreetMap opțională** (oprită implicit, nesalvată, cu confirmare și avertisment de rețea; doar `img-src` către tile.openstreetmap.org); corecția altitudinii cu DEM: planificat (realizat parțial în 2.2.0, vezi mai jos); linii Stare/Offline; CHANGELOG.md (anterior: v2.0.0).
 
 - 1.0.0 — 2026-10-14: prima versiune.

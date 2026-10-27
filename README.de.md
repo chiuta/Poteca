@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 2.1.0 · **Zuletzt aktualisiert:** 2026-10-27
+**Version:** 2.2.0 · **Zuletzt aktualisiert:** 2026-10-27
 
 **Status:** stabil · **Offline:** vollständig; Internet nur für die optionale OpenStreetMap-Karte nötig (standardmäßig aus)
 
@@ -76,11 +76,16 @@ Im Tab **Ebenen** gibt es das Kontrollkästchen **OpenStreetMap-Karte anzeigen**
 - Nur in der **Web-Mercator**-Projektion und nur am Bildschirm sichtbar: **nicht in SVG-/PNG-Exporten und im Druck**. Namensnennung auf der Karte: © OpenStreetMap; Daten © OpenStreetMap-Mitwirkende (ODbL). Die Kachelnutzung folgt der [OSM Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/): nur Kacheln des sichtbaren Bereichs (höchstens 64), kein Massen-Vorabladen; der öffentliche Server kann Anfragen ohne Referer blockieren (z. B. beim Öffnen über `file://`).
 - Offline oder bei gesperrtem Netz erscheinen keine Kacheln (eine Fehlermeldung wird angezeigt); der Rest der App funktioniert unverändert.
 
-## Höhenkorrektur mit einem digitalen Geländemodell (DGM): geplant
+## Elevation from a DEM, using .hgt files you provide (2.2.0)
 
-**Nicht implementiert.** Die GPS-Höhe mit einem DGM (SRTM, Copernicus usw.) zu korrigieren, ist offline in einer einzigen Datei nicht möglich, ohne Geländedaten (zig MB bis GB) einzubetten oder einen zusätzlichen Online-Dienst zu nutzen, der ein zweites Netzwerkziel hinzufügen würde. Es bleibt auf der Roadmap; bis dahin zeigt Poteca den geglätteten Anstieg und den Rohwert und behauptet keine Genauigkeit über die der GPS-Daten hinaus.
+_(English only; not yet translated into this language.)_
+
+In the **Edit** tab, the "Elevation from a DEM (.hgt files you provide)" fieldset: you load **SRTM `.hgt`** files (3″ = 2,884,802 B or 1″ = 25,934,402 B; names like `N45E026.hgt`) downloaded separately. They are read locally, **not saved**, and nothing is sent anywhere. "Correct the track's elevation" replaces the elevation of covered points with the bilinearly interpolated DEM value (void cells and points outside the tiles stay unchanged), can be undone with Ctrl+Z, and reports the mean DEM − GPS difference.
+
+**Limits (not simulated):** Poteca **does not include terrain data** (that would be tens of MB up to GB; no compact embedded data could be verified). The vertical accuracy is that of the model you provide; it cannot be guaranteed here. Tested only with **synthetic** tiles (`tests/dem.test.mjs`: sloped plane, interpolation, voids, undo, 8 languages), not with real SRTM tiles. It does not read GeoTIFF, Copernicus in other formats, or other resolutions. New fr/it/es/pt/hu/de labels are machine translations.
 
 ## Verlauf
+- **2.2.0 — 2026-10-27:** elevation from a DEM using user-provided SRTM `.hgt` files (nothing embedded; tested only with synthetic tiles); new tests `tests/dem.test.mjs`.
 - **2.1.0 — 2026-10-27:** **optionale OpenStreetMap**-Basiskarte (standardmäßig aus, nicht gespeichert, mit Bestätigung und Netzwerkhinweis; nur `img-src` zu tile.openstreetmap.org); Höhenkorrektur per DGM: geplant; Status/Offline-Zeilen; CHANGELOG.md (vorherige: v2.0.0).
 
 - 1.0.0 — 2026-10-14: erste Version.

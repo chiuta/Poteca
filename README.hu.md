@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 2.1.0 · **Utolsó frissítés:** 2026-10-27
+**Verzió:** 2.2.0 · **Utolsó frissítés:** 2026-10-27
 
 **Állapot:** stabil · **Offline:** teljes; internet csak a választható OpenStreetMap-térképhez kell (alapból ki van kapcsolva)
 
@@ -76,11 +76,16 @@ A **Rétegek** fülön található az **OpenStreetMap-térkép megjelenítése**
 - Csak **Web Mercator** vetületben és csak a képernyőn látszik: **nincs benne az SVG/PNG exportban és a nyomtatásban**. Forrásmegjelölés a térképen: © OpenStreetMap; az adatok © az OpenStreetMap közreműködői (ODbL). A csempék használata az [OSM csempehasználati irányelvét](https://operations.osmfoundation.org/policies/tiles/) követi: csak a látható terület csempéi (legfeljebb 64), tömeges előtöltés nélkül; a nyilvános szerver blokkolhatja a Referer nélküli kéréseket (pl. `file://` megnyitásakor).
 - Offline vagy blokkolt hálózat esetén a csempék nem jelennek meg (hibaüzenet látszik); az alkalmazás többi része változatlanul működik.
 
-## Magasságkorrekció digitális domborzatmodellel (DEM): tervezett
+## Elevation from a DEM, using .hgt files you provide (2.2.0)
 
-**Nincs megvalósítva.** A GPS-magasság DEM-mel (SRTM, Copernicus stb.) történő korrigálása offline, egyetlen fájlban nem oldható meg terepadatok beágyazása (több tíz MB-tól GB-ig) vagy egy további online szolgáltatás nélkül, ami egy második hálózati célt adna hozzá. Marad a tervek között; addig a Poteca a simított emelkedést és a nyers értéket is mutatja, és nem állít a GPS-adatoknál nagyobb pontosságot.
+_(English only; not yet translated into this language.)_
+
+In the **Edit** tab, the "Elevation from a DEM (.hgt files you provide)" fieldset: you load **SRTM `.hgt`** files (3″ = 2,884,802 B or 1″ = 25,934,402 B; names like `N45E026.hgt`) downloaded separately. They are read locally, **not saved**, and nothing is sent anywhere. "Correct the track's elevation" replaces the elevation of covered points with the bilinearly interpolated DEM value (void cells and points outside the tiles stay unchanged), can be undone with Ctrl+Z, and reports the mean DEM − GPS difference.
+
+**Limits (not simulated):** Poteca **does not include terrain data** (that would be tens of MB up to GB; no compact embedded data could be verified). The vertical accuracy is that of the model you provide; it cannot be guaranteed here. Tested only with **synthetic** tiles (`tests/dem.test.mjs`: sloped plane, interpolation, voids, undo, 8 languages), not with real SRTM tiles. It does not read GeoTIFF, Copernicus in other formats, or other resolutions. New fr/it/es/pt/hu/de labels are machine translations.
 
 ## Előzmények
+- **2.2.0 — 2026-10-27:** elevation from a DEM using user-provided SRTM `.hgt` files (nothing embedded; tested only with synthetic tiles); new tests `tests/dem.test.mjs`.
 - **2.1.0 — 2026-10-27:** **választható OpenStreetMap** alaptérkép (alapból ki, nem mentődik, megerősítéssel és hálózati figyelmeztetéssel; csak `img-src` a tile.openstreetmap.org felé); DEM-es magasságkorrekció: tervezett; Állapot/Offline sorok; CHANGELOG.md (előző: v2.0.0).
 
 - 1.0.0 — 2026-10-14: első verzió.
