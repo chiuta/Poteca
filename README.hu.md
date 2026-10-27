@@ -2,11 +2,13 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 2.0.0 · **Utolsó frissítés:** 2026-10-26
+**Verzió:** 2.1.0 · **Utolsó frissítés:** 2026-10-27
+
+**Állapot:** stabil · **Offline:** teljes; internet csak a választható OpenStreetMap-térképhez kell (alapból ki van kapcsolva)
 
 A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-A Poteca megnyitja a GPX, GeoJSON, KML és CSV formátumú nyomvonalakat, helyi térképen (alaptérkép nélkül) jeleníti meg őket, statisztikákat számol (távolság, emelkedés/lejtés, mozgással és állással töltött idő, sebességek, lejtőszögek, körök kilométerenként/mérföldenként), a térképpel szinkronizált interaktív magassági profilt mutat, és lehetővé teszi a nyomvonalak szerkesztését (vágás, szétválasztás, egyesítés, megfordítás, egyszerűsítés, GPS-ugrások eltávolítása, kézi pontok, útpontok) és exportálását. Minden a böngészőben fut, offline.
+A Poteca megnyitja a GPX, GeoJSON, KML és CSV formátumú nyomvonalakat, helyi térképen (alapból alaptérkép nélkül) jeleníti meg őket, statisztikákat számol (távolság, emelkedés/lejtés, mozgással és állással töltött idő, sebességek, lejtőszögek, körök kilométerenként/mérföldenként), a térképpel szinkronizált interaktív magassági profilt mutat, és lehetővé teszi a nyomvonalak szerkesztését (vágás, szétválasztás, egyesítés, megfordítás, egyszerűsítés, GPS-ugrások eltávolítása, kézi pontok, útpontok) és exportálását. Minden a böngészőben fut, offline.
 
 ![képernyőkép](screenshot.hu.png)
 
@@ -27,7 +29,7 @@ A képernyőkép szintetikus bemutató adatokat mutat („Példa betöltése”)
 
 ## Amit NEM tud, és a korlátok
 
-- **Nincs alaptérkép.** Nem tölt le csempéket (nincs hálózat). Csak a nyomvonalak, az adaptív rács, a méretarány-sáv és az általad betöltött rétegek látszanak.
+- **Alapértelmezés szerint nincs alaptérkép.** Nem tölt le csempéket, hacsak nem kapcsolod be a választható OpenStreetMap-térképet (lásd lent). Csak a nyomvonalak, az adaptív rács, a méretarány-sáv és az általad betöltött rétegek látszanak.
 - Háttérképek: PNG/JPEG/WebP két illesztőponttal vagy kézi kerettel, Web Mercator vetületben; a GeoTIFF-et **nem** olvassa, a forgatást nem korrigálja.
 - Az emelkedési statisztikák a simítástól és a küszöbtől függnek; az értékek becslések (a GPS-magasság zajos). A Poteca összehasonlításképpen a nyers értéket is megmutatja.
 - A távolság haversine-képlettel számolódik (gömb, R = 6 371 008,8 m); a Vincenty-féle (WGS84) számítás opcionális, és legfeljebb ~0,3 %-kal térhet el.
@@ -40,7 +42,7 @@ A képernyőkép szintetikus bemutató adatokat mutat („Példa betöltése”)
 
 ## Adatvédelem
 
-Helyben fut, és semmit nem küld el. A CSP minden hálózati kapcsolatot blokkol (`connect-src 'none'`). A fájljaid nem hagyják el az eszközt. Helyben csak a munkamenet (localStorage/IndexedDB, `fff.poteca.` előtagú kulcsokkal) és a beállítások (nyelv, téma) kerülnek mentésre. A „Mindent töröl” mindent eltávolít. Az adatvédelmi zóna exportáláskor levágja a nyomvonal elejét és végét (pl. hogy ne áruld el a lakcímedet).
+Helyben fut, és semmit nem küld el. A CSP minden hálózati kapcsolatot blokkol (`connect-src 'none'`); az egyetlen kivétel az `img-src` a tile.openstreetmap.org számára, amelyet CSAK akkor használ, ha kézzel bekapcsolod a választható OpenStreetMap-térképet (alapból ki van kapcsolva). A fájljaid nem hagyják el az eszközt. Helyben csak a munkamenet (localStorage/IndexedDB, `fff.poteca.` előtagú kulcsokkal) és a beállítások (nyelv, téma) kerülnek mentésre. A „Mindent töröl” mindent eltávolít. Az adatvédelmi zóna exportáláskor levágja a nyomvonal elejét és végét (pl. hogy ne áruld el a lakcímedet).
 
 ## Támogatott formátumok
 
@@ -64,6 +66,21 @@ A felületnek 8 nyelve van: a román (alapértelmezett) és az angol a szerző m
 
 MIT — lásd a `LICENSE` fájlt a tároló gyökérkönyvtárában.
 
+## OpenStreetMap alaptérkép (választható)
+
+A **Rétegek** fülön található az **OpenStreetMap-térkép megjelenítése** jelölőnégyzet.
+
+- **Alapértelmezés szerint ki van kapcsolva** és **nem mentődik**: az alkalmazás minden megnyitásakor újra ki van kapcsolva. A bekapcsolás kifejezett megerősítést kér.
+- **Hálózati figyelmeztetés:** amíg be van kapcsolva, a Poteca 256×256 px-es PNG csempéket kér a `https://tile.openstreetmap.org/{z}/{x}/{y}.png` címről. Az OpenStreetMap szervere látja az IP-címedet, a böngésződet, a kérést indító oldalt (Referer) és a csempék koordinátáit (nagyjából a területet és a nagyítási szintet). **A nyomvonalaid, útpontjaid és fájljaid nem kerülnek elküldésre.**
+- CSP: a `connect-src 'none'` változatlan; csak az `img-src` kapja meg a `https://tile.openstreetmap.org` címet (az `fff-info`/`app.json` `egress` mezőjében is szerepel). Bekapcsolás nélkül az alkalmazás nem küld kérést.
+- Csak **Web Mercator** vetületben és csak a képernyőn látszik: **nincs benne az SVG/PNG exportban és a nyomtatásban**. Forrásmegjelölés a térképen: © OpenStreetMap; az adatok © az OpenStreetMap közreműködői (ODbL). A csempék használata az [OSM csempehasználati irányelvét](https://operations.osmfoundation.org/policies/tiles/) követi: csak a látható terület csempéi (legfeljebb 64), tömeges előtöltés nélkül; a nyilvános szerver blokkolhatja a Referer nélküli kéréseket (pl. `file://` megnyitásakor).
+- Offline vagy blokkolt hálózat esetén a csempék nem jelennek meg (hibaüzenet látszik); az alkalmazás többi része változatlanul működik.
+
+## Magasságkorrekció digitális domborzatmodellel (DEM): tervezett
+
+**Nincs megvalósítva.** A GPS-magasság DEM-mel (SRTM, Copernicus stb.) történő korrigálása offline, egyetlen fájlban nem oldható meg terepadatok beágyazása (több tíz MB-tól GB-ig) vagy egy további online szolgáltatás nélkül, ami egy második hálózati célt adna hozzá. Marad a tervek között; addig a Poteca a simított emelkedést és a nyers értéket is mutatja, és nem állít a GPS-adatoknál nagyobb pontosságot.
+
 ## Előzmények
+- **2.1.0 — 2026-10-27:** **választható OpenStreetMap** alaptérkép (alapból ki, nem mentődik, megerősítéssel és hálózati figyelmeztetéssel; csak `img-src` a tile.openstreetmap.org felé); DEM-es magasságkorrekció: tervezett; Állapot/Offline sorok; CHANGELOG.md (előző: v2.0.0).
 
 - 1.0.0 — 2026-10-14: első verzió.

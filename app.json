@@ -2,25 +2,32 @@
   "schema": 1,
   "slug": "poteca",
   "name": "Poteca",
-  "version": "2.0.0",
-  "updated": "2026-10-26",
-  "description": "Poteca: vizualizator și editor de trasee GPX, GeoJSON, KML și CSV, offline, fără hartă de bază și fără rețea. Statistici, profil de altitudine, editare, comparație și export.",
-  "egress": [],
+  "version": "2.1.0",
+  "updated": "2026-10-27",
+  "description": "Poteca: vizualizator și editor de trasee GPX, GeoJSON, KML și CSV, offline, implicit fără hartă de bază și fără rețea (hartă OpenStreetMap online opțională, oprită implicit). Statistici, profil de altitudine, editare, comparație și export.",
+  "egress": [
+    {
+      "host": "tile.openstreetmap.org",
+      "via": [
+        "csp:img-src"
+      ]
+    }
+  ],
   "permissions": [
     "serviceWorker",
     "indexedDB",
     "localStorage"
   ],
   "storageKeys": [],
-  "sizeBytes": 438459,
-  "sha256": "31e424784272d403f4868ece9c5f7813e8a422ede879732066a9c6a0269360de",
+  "sizeBytes": 457642,
+  "sha256": "4b388b50292f113643f4d8a6e762020fcd9319ae0637430b147b670d7f431d6c",
   "csp": {
     "present": true,
     "directives": {
       "default-src": "'none'",
       "script-src": "sha256×3",
       "style-src": "'unsafe-inline'",
-      "img-src": "'self' data: blob:",
+      "img-src": "'self' data: blob: https://tile.openstreetmap.org",
       "media-src": "data: blob:",
       "font-src": "data:",
       "connect-src": "'none'",

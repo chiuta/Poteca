@@ -2,11 +2,13 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · **Italiano** · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versione:** 2.0.0 · **Ultimo aggiornamento:** 2026-10-26
+**Versione:** 2.1.0 · **Ultimo aggiornamento:** 2026-10-27
+
+**Stato:** stabile · **Offline:** completo; richiede internet solo per la mappa OpenStreetMap facoltativa (disattivata per impostazione predefinita)
 
 Lingue dell'interfaccia: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca apre tracce GPX, GeoJSON, KML e CSV, le mostra su una mappa locale (senza mappa di base), calcola statistiche (distanza, salita/discesa, tempo in movimento e da fermo, velocità, pendenze, giri per chilometro/miglio), mostra un profilo altimetrico interattivo sincronizzato con la mappa e permette di modificare le tracce (taglio, divisione, unione, inversione, semplificazione, rimozione dei salti GPS, punti manuali, waypoint) e di esportarle. Tutto gira nel browser, offline.
+Poteca apre tracce GPX, GeoJSON, KML e CSV, le mostra su una mappa locale (per impostazione predefinita senza mappa di base), calcola statistiche (distanza, salita/discesa, tempo in movimento e da fermo, velocità, pendenze, giri per chilometro/miglio), mostra un profilo altimetrico interattivo sincronizzato con la mappa e permette di modificare le tracce (taglio, divisione, unione, inversione, semplificazione, rimozione dei salti GPS, punti manuali, waypoint) e di esportarle. Tutto gira nel browser, offline.
 
 ![schermata](screenshot.it.png)
 
@@ -27,7 +29,7 @@ La schermata mostra dati dimostrativi sintetici («Carica esempio»), generati l
 
 ## Cosa NON fa e limiti
 
-- **Nessuna mappa di base.** Non scarica alcun tassello (nessuna rete). Si vedono solo le tracce, la griglia adattiva, la barra di scala e i livelli che carichi tu.
+- **Nessuna mappa di base per impostazione predefinita.** Non scarica alcun tassello a meno che tu non attivi la mappa OpenStreetMap facoltativa (vedi sotto). Si vedono solo le tracce, la griglia adattiva, la barra di scala e i livelli che carichi tu.
 - Immagini di sfondo: PNG/JPEG/WebP con due punti di controllo o riquadro manuale, nella proiezione Web Mercator; il GeoTIFF **non** viene letto, la rotazione non viene corretta.
 - Le statistiche di salita dipendono dalla levigatura e dalla soglia; i valori sono stime (la quota GPS è rumorosa). Poteca mostra anche il valore grezzo per confronto.
 - La distanza è haversine (sfera R = 6 371 008,8 m); Vincenty (WGS84) è facoltativo e può differire fino a ~0,3 %.
@@ -40,7 +42,7 @@ La schermata mostra dati dimostrativi sintetici («Carica esempio»), generati l
 
 ## Riservatezza
 
-Funziona in locale e non invia nulla. La CSP blocca qualsiasi connessione di rete (`connect-src 'none'`). I tuoi file non lasciano il dispositivo. Vengono salvate in locale solo la sessione (localStorage/IndexedDB, chiavi con prefisso `fff.poteca.`) e le preferenze (lingua, tema). «Elimina tutto» rimuove tutto. La zona di riservatezza taglia l'inizio e la fine della traccia all'esportazione (ad es. per non rivelare l'indirizzo di casa).
+Funziona in locale e non invia nulla. La CSP blocca qualsiasi connessione di rete (`connect-src 'none'`); l’unica eccezione è `img-src` per tile.openstreetmap.org, usata SOLO se attivi manualmente la mappa OpenStreetMap facoltativa (disattivata per impostazione predefinita). I tuoi file non lasciano il dispositivo. Vengono salvate in locale solo la sessione (localStorage/IndexedDB, chiavi con prefisso `fff.poteca.`) e le preferenze (lingua, tema). «Elimina tutto» rimuove tutto. La zona di riservatezza taglia l'inizio e la fine della traccia all'esportazione (ad es. per non rivelare l'indirizzo di casa).
 
 ## Formati supportati
 
@@ -64,6 +66,21 @@ L'interfaccia ha 8 lingue: rumeno (predefinita) e inglese, scritte dall'autore; 
 
 MIT — vedi il file `LICENSE` nella radice del repository.
 
+## Mappa di base OpenStreetMap (facoltativa)
+
+Nella scheda **Livelli** c’è la casella **Mostra la mappa OpenStreetMap**.
+
+- **Disattivata per impostazione predefinita** e **non salvata**: a ogni apertura dell’app è di nuovo disattivata. L’attivazione richiede una conferma esplicita.
+- **Avviso di rete:** finché è attiva, Poteca richiede tessere PNG di 256×256 px da `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. Il server OpenStreetMap vede il tuo indirizzo IP, il browser, la pagina da cui parte la richiesta (Referer) e le coordinate delle tessere (all’incirca l’area e il livello di zoom). **Le tue tracce, i waypoint e i file non vengono inviati.**
+- CSP: `connect-src 'none'` resta invariato; solo `img-src` riceve `https://tile.openstreetmap.org` (dichiarato anche in `fff-info`/`app.json`, `egress`). Senza attivazione l’app non fa alcuna richiesta.
+- Visibile solo nella proiezione **Web Mercator** e solo a schermo: **non compare nelle esportazioni SVG/PNG né in stampa**. Attribuzione sulla mappa: © OpenStreetMap; dati © i collaboratori di OpenStreetMap (ODbL). L’uso delle tessere segue la [Tile Usage Policy di OSM](https://operations.osmfoundation.org/policies/tiles/): solo le tessere dell’area visibile (al massimo 64), nessun precaricamento massivo; il server pubblico può bloccare richieste senza Referer (ad es. apertura da `file://`).
+- Offline o con rete bloccata le tessere non compaiono (viene mostrato un errore); il resto dell’app funziona invariato.
+
+## Correzione dell’altitudine con un modello digitale del terreno (DEM): pianificato
+
+**Non implementato.** Correggere l’altitudine GPS con un DEM (SRTM, Copernicus, ecc.) non si può fare offline in un singolo file senza incorporare dati del terreno (da decine di MB a GB) né un servizio online aggiuntivo, che aggiungerebbe una seconda destinazione di rete. Resta nella roadmap; nel frattempo Poteca mostra la salita livellata e il valore grezzo e non dichiara una precisione superiore a quella dei dati GPS.
+
 ## Cronologia
+- **2.1.0 — 2026-10-27:** mappa di base **OpenStreetMap facoltativa** (disattivata per impostazione predefinita, non salvata, con conferma e avviso di rete; solo `img-src` verso tile.openstreetmap.org); correzione dell’altitudine con DEM: pianificato; righe Stato/Offline; CHANGELOG.md (precedente: v2.0.0).
 
 - 1.0.0 — 2026-10-14: prima versione.

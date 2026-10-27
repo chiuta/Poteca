@@ -2,11 +2,13 @@
 
 [English](README.md) · [Română](README.ro.md) · **Français** · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version :** 2.0.0 · **Dernière mise à jour :** 2026-10-26
+**Version :** 2.1.0 · **Dernière mise à jour :** 2026-10-27
+
+**État:** stable · **Hors ligne:** complet ; internet requis uniquement pour la carte OpenStreetMap facultative (désactivée par défaut)
 
 Langues de l'interface : **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca ouvre des traces GPX, GeoJSON, KML et CSV, les affiche sur une carte locale (sans fond de carte), calcule des statistiques (distance, dénivelé positif/négatif, temps en mouvement et à l'arrêt, vitesses, pentes, tours par kilomètre/mile), présente un profil altimétrique interactif synchronisé avec la carte et permet d'éditer les traces (découpe, scission, fusion, inversion, simplification, suppression des sauts GPS, points manuels, waypoints) et de les exporter. Tout s'exécute dans le navigateur, hors ligne.
+Poteca ouvre des traces GPX, GeoJSON, KML et CSV, les affiche sur une carte locale (par défaut sans fond de carte), calcule des statistiques (distance, dénivelé positif/négatif, temps en mouvement et à l'arrêt, vitesses, pentes, tours par kilomètre/mile), présente un profil altimétrique interactif synchronisé avec la carte et permet d'éditer les traces (découpe, scission, fusion, inversion, simplification, suppression des sauts GPS, points manuels, waypoints) et de les exporter. Tout s'exécute dans le navigateur, hors ligne.
 
 ![capture d'écran](screenshot.fr.png)
 
@@ -27,7 +29,7 @@ La capture montre des données de démonstration synthétiques (« Charger un ex
 
 ## Ce qu'elle ne fait PAS, et limites
 
-- **Pas de fond de carte.** Elle ne télécharge aucune tuile (pas de réseau). On ne voit que les traces, la grille adaptative, l'échelle et les couches que vous chargez vous-même.
+- **Pas de fond de carte par défaut.** Elle ne télécharge aucune tuile sauf si vous activez la carte OpenStreetMap facultative (voir plus bas). On ne voit que les traces, la grille adaptative, l'échelle et les couches que vous chargez vous-même.
 - Images d'arrière-plan : PNG/JPEG/WebP avec deux points de contrôle ou une emprise manuelle, en projection Web Mercator ; le GeoTIFF **n'est pas** lu, la rotation n'est pas corrigée.
 - Les statistiques de dénivelé dépendent du lissage et du seuil ; les valeurs sont des estimations (l'altitude GPS est bruitée). Poteca affiche aussi la valeur brute à titre de comparaison.
 - La distance est calculée par haversine (sphère R = 6 371 008,8 m) ; Vincenty (WGS84) est optionnel et peut différer jusqu'à ~0,3 %.
@@ -40,7 +42,7 @@ La capture montre des données de démonstration synthétiques (« Charger un ex
 
 ## Confidentialité
 
-Elle s'exécute localement et n'envoie rien. La CSP bloque toute connexion réseau (`connect-src 'none'`). Vos fichiers ne quittent pas l'appareil. Seuls la session (localStorage/IndexedDB, clés préfixées `fff.poteca.`) et les préférences (langue, thème) sont enregistrées localement. « Tout supprimer » efface tout. La zone de confidentialité coupe le début et la fin de la trace à l'export (par ex. pour ne pas révéler l'adresse de votre domicile).
+Elle s'exécute localement et n'envoie rien. La CSP bloque toute connexion réseau (`connect-src 'none'`) ; la seule exception est `img-src` pour tile.openstreetmap.org, utilisée UNIQUEMENT si vous activez manuellement la carte OpenStreetMap facultative (désactivée par défaut). Vos fichiers ne quittent pas l'appareil. Seuls la session (localStorage/IndexedDB, clés préfixées `fff.poteca.`) et les préférences (langue, thème) sont enregistrées localement. « Tout supprimer » efface tout. La zone de confidentialité coupe le début et la fin de la trace à l'export (par ex. pour ne pas révéler l'adresse de votre domicile).
 
 ## Formats acceptés
 
@@ -64,6 +66,21 @@ L'interface existe en 8 langues : le roumain (par défaut) et l'anglais, rédig�
 
 MIT — voir le fichier `LICENSE` à la racine du dépôt.
 
+## Fond de carte OpenStreetMap (facultatif)
+
+Dans l’onglet **Couches** se trouve la case **Afficher la carte OpenStreetMap**.
+
+- **Désactivée par défaut** et **non enregistrée** : à chaque ouverture de l’application, elle est de nouveau désactivée. L’activer demande une confirmation explicite.
+- **Avertissement réseau :** tant qu’elle est active, Poteca demande des tuiles PNG de 256×256 px à `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. Le serveur OpenStreetMap voit votre adresse IP, votre navigateur, la page d’origine de la requête (Referer) et les coordonnées des tuiles (approximativement la zone et le niveau de zoom). **Vos traces, waypoints et fichiers ne sont pas envoyés.**
+- CSP : `connect-src 'none'` reste inchangé ; seule `img-src` reçoit `https://tile.openstreetmap.org` (également déclaré dans `fff-info`/`app.json`, `egress`). Sans activation, l’application ne fait aucune requête.
+- Affichée uniquement en projection **Web Mercator** et seulement à l’écran : **absente des exports SVG/PNG et de l’impression**. Attribution sur la carte : © OpenStreetMap ; données © les contributeurs d’OpenStreetMap (ODbL). L’usage des tuiles suit la [politique d’utilisation des tuiles OSM](https://operations.osmfoundation.org/policies/tiles/) : seulement les tuiles de la zone visible (64 au plus), pas de préchargement en masse ; le serveur public peut bloquer les requêtes sans Referer (p. ex. ouverture depuis `file://`).
+- Hors ligne ou réseau bloqué, les tuiles n’apparaissent pas (un message d’erreur s’affiche) ; le reste de l’application fonctionne normalement.
+
+## Correction d’altitude par modèle numérique de terrain (MNT) : prévu
+
+**Non implémenté.** Corriger l’altitude GPS avec un MNT (SRTM, Copernicus, etc.) est impossible hors ligne dans un seul fichier sans embarquer des données de relief (de dizaines de Mo à des Go) ni recourir à un service en ligne supplémentaire, ce qui ajouterait une seconde destination réseau. Cela reste à la feuille de route ; en attendant, Poteca montre la montée lissée et la valeur brute et ne prétend pas à une précision supérieure à celle des données GPS.
+
 ## Historique
+- **2.1.0 — 2026-10-27 :** fond de carte **OpenStreetMap facultatif** (désactivé par défaut, non enregistré, avec confirmation et avertissement réseau ; seulement `img-src` vers tile.openstreetmap.org) ; correction d’altitude par MNT : prévu ; lignes État/Hors ligne ; CHANGELOG.md (précédente : v2.0.0).
 
 - 1.0.0 — 2026-10-14 : première version.

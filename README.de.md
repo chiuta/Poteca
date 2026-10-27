@@ -2,11 +2,13 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 2.0.0 · **Zuletzt aktualisiert:** 2026-10-26
+**Version:** 2.1.0 · **Zuletzt aktualisiert:** 2026-10-27
+
+**Status:** stabil · **Offline:** vollständig; Internet nur für die optionale OpenStreetMap-Karte nötig (standardmäßig aus)
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
-Poteca öffnet GPX-, GeoJSON-, KML- und CSV-Tracks, zeigt sie auf einer lokalen Karte (ohne Basiskarte) an, berechnet Statistiken (Strecke, Anstieg/Abstieg, Zeit in Bewegung und im Stand, Geschwindigkeiten, Steigungen, Runden pro Kilometer/Meile), zeigt ein interaktives, mit der Karte synchronisiertes Höhenprofil und ermöglicht es, Tracks zu bearbeiten (zuschneiden, teilen, zusammenführen, umkehren, vereinfachen, GPS-Sprünge entfernen, manuelle Punkte, Wegpunkte) und zu exportieren. Alles läuft im Browser, offline.
+Poteca öffnet GPX-, GeoJSON-, KML- und CSV-Tracks, zeigt sie auf einer lokalen Karte (standardmäßig ohne Basiskarte) an, berechnet Statistiken (Strecke, Anstieg/Abstieg, Zeit in Bewegung und im Stand, Geschwindigkeiten, Steigungen, Runden pro Kilometer/Meile), zeigt ein interaktives, mit der Karte synchronisiertes Höhenprofil und ermöglicht es, Tracks zu bearbeiten (zuschneiden, teilen, zusammenführen, umkehren, vereinfachen, GPS-Sprünge entfernen, manuelle Punkte, Wegpunkte) und zu exportieren. Alles läuft im Browser, offline.
 
 ![Screenshot](screenshot.de.png)
 
@@ -27,7 +29,7 @@ Der Screenshot zeigt synthetische Demodaten („Beispiel laden“), die lokal er
 
 ## Was sie NICHT kann, und Grenzen
 
-- **Keine Basiskarte.** Es werden keine Kacheln heruntergeladen (kein Netzwerk). Zu sehen sind nur die Tracks, das adaptive Raster, der Maßstabsbalken und die Ebenen, die Sie selbst laden.
+- **Standardmäßig keine Basiskarte.** Es werden keine Kacheln heruntergeladen, außer du schaltest die optionale OpenStreetMap-Karte ein (siehe unten). Zu sehen sind nur die Tracks, das adaptive Raster, der Maßstabsbalken und die Ebenen, die Sie selbst laden.
 - Hintergrundbilder: PNG/JPEG/WebP mit zwei Passpunkten oder manuellem Rahmen, in der Web-Mercator-Projektion; GeoTIFF wird **nicht** gelesen, die Drehung wird nicht korrigiert.
 - Die Anstiegsstatistiken hängen von Glättung und Schwelle ab; die Werte sind Schätzungen (die GPS-Höhe rauscht). Poteca zeigt zum Vergleich auch den Rohwert.
 - Die Entfernung wird nach Haversine berechnet (Kugel R = 6.371.008,8 m); Vincenty (WGS84) ist optional und kann um bis zu ~0,3 % abweichen.
@@ -40,7 +42,7 @@ Der Screenshot zeigt synthetische Demodaten („Beispiel laden“), die lokal er
 
 ## Datenschutz
 
-Sie läuft lokal und sendet nichts. Die CSP blockiert jede Netzwerkverbindung (`connect-src 'none'`). Ihre Dateien verlassen das Gerät nicht. Lokal gespeichert werden nur die Sitzung (localStorage/IndexedDB, Schlüssel mit dem Präfix `fff.poteca.`) und die Einstellungen (Sprache, Design). „Alles löschen“ entfernt alles. Die Privatsphäre-Zone schneidet beim Export Anfang und Ende des Tracks ab (z. B. um die Wohnadresse nicht zu verraten).
+Sie läuft lokal und sendet nichts. Die CSP blockiert jede Netzwerkverbindung (`connect-src 'none'`); die einzige Ausnahme ist `img-src` für tile.openstreetmap.org, nur genutzt, wenn du die optionale OpenStreetMap-Karte manuell einschaltest (standardmäßig aus). Ihre Dateien verlassen das Gerät nicht. Lokal gespeichert werden nur die Sitzung (localStorage/IndexedDB, Schlüssel mit dem Präfix `fff.poteca.`) und die Einstellungen (Sprache, Design). „Alles löschen“ entfernt alles. Die Privatsphäre-Zone schneidet beim Export Anfang und Ende des Tracks ab (z. B. um die Wohnadresse nicht zu verraten).
 
 ## Unterstützte Formate
 
@@ -64,6 +66,21 @@ Die Oberfläche hat 8 Sprachen: Rumänisch (Standard) und Englisch, vom Autor ve
 
 MIT — siehe die Datei `LICENSE` im Wurzelverzeichnis des Repositorys.
 
+## OpenStreetMap-Basiskarte (optional)
+
+Im Tab **Ebenen** gibt es das Kontrollkästchen **OpenStreetMap-Karte anzeigen**.
+
+- **Standardmäßig aus** und **nicht gespeichert**: Bei jedem Öffnen der App ist sie wieder aus. Das Einschalten erfordert eine ausdrückliche Bestätigung.
+- **Netzwerkhinweis:** Solange sie an ist, fordert Poteca PNG-Kacheln von 256×256 px von `https://tile.openstreetmap.org/{z}/{x}/{y}.png` an. Der OpenStreetMap-Server sieht deine IP-Adresse, deinen Browser, die anfragende Seite (Referer) und die Kachelkoordinaten (ungefähr Gebiet und Zoomstufe). **Deine Tracks, Wegpunkte und Dateien werden nicht gesendet.**
+- CSP: `connect-src 'none'` bleibt unverändert; nur `img-src` erhält `https://tile.openstreetmap.org` (auch in `fff-info`/`app.json`, `egress`, deklariert). Ohne Einschalten stellt die App keine Anfrage.
+- Nur in der **Web-Mercator**-Projektion und nur am Bildschirm sichtbar: **nicht in SVG-/PNG-Exporten und im Druck**. Namensnennung auf der Karte: © OpenStreetMap; Daten © OpenStreetMap-Mitwirkende (ODbL). Die Kachelnutzung folgt der [OSM Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/): nur Kacheln des sichtbaren Bereichs (höchstens 64), kein Massen-Vorabladen; der öffentliche Server kann Anfragen ohne Referer blockieren (z. B. beim Öffnen über `file://`).
+- Offline oder bei gesperrtem Netz erscheinen keine Kacheln (eine Fehlermeldung wird angezeigt); der Rest der App funktioniert unverändert.
+
+## Höhenkorrektur mit einem digitalen Geländemodell (DGM): geplant
+
+**Nicht implementiert.** Die GPS-Höhe mit einem DGM (SRTM, Copernicus usw.) zu korrigieren, ist offline in einer einzigen Datei nicht möglich, ohne Geländedaten (zig MB bis GB) einzubetten oder einen zusätzlichen Online-Dienst zu nutzen, der ein zweites Netzwerkziel hinzufügen würde. Es bleibt auf der Roadmap; bis dahin zeigt Poteca den geglätteten Anstieg und den Rohwert und behauptet keine Genauigkeit über die der GPS-Daten hinaus.
+
 ## Verlauf
+- **2.1.0 — 2026-10-27:** **optionale OpenStreetMap**-Basiskarte (standardmäßig aus, nicht gespeichert, mit Bestätigung und Netzwerkhinweis; nur `img-src` zu tile.openstreetmap.org); Höhenkorrektur per DGM: geplant; Status/Offline-Zeilen; CHANGELOG.md (vorherige: v2.0.0).
 
 - 1.0.0 — 2026-10-14: erste Version.
