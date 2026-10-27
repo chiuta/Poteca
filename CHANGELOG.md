@@ -2,6 +2,15 @@
 
 Format: [SemVer](https://semver.org/lang/ro/) MAJOR.MINOR.PATCH.
 
+## 2.2.0 — 2026-10-27 (anterior: 2.1.0)
+
+Altitudine din DEM furnizat de utilizator:
+- Fieldset nou în fila Editare: încarci fișiere SRTM `.hgt` (3″/1″, nume de forma N45E026.hgt); altitudinea punctelor acoperite este înlocuită cu valoarea interpolată biliniar; „void" și zonele fără dală rămân neschimbate; Ctrl+Z; raport cu diferența medie DEM − GPS. Nimic încorporat, nimic salvat, nicio cerere de rețea.
+- Test nou `tests/dem.test.mjs` (19 verificări) cu dale SINTETICE, nu cu SRTM real; precizia verticală nu e garantată. Texte noi în 8 limbi (fr/it/es/pt/hu/de: traducere automată).
+- README (8 limbi): secțiunea „DEM: planificat" înlocuită cu descrierea funcției și a limitelor.
+
+---
+
 ## 2.1.0 — 2026-10-27 (anterior: v2.0.0)
 
 Stare: stabil · Offline: cere internet doar pentru harta OpenStreetMap opțională (oprită implicit)
