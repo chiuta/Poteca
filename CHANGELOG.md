@@ -2,6 +2,10 @@
 
 Format: [SemVer](https://semver.org/lang/ro/) MAJOR.MINOR.PATCH.
 
+## 2.3.2 — 2026-11-03
+
+- Corectat: constanta de versiune din cod (GPX `creator`, filigran pe hartă, raport) era 2.3.0; urmează acum `app.json`.
+
 ## 2.3.1 — 2026-11-03
 
 Etapa 4: jurnal de teren geolocalizat comun (plicul geo/journal, export GeoJSON/GPX), cu atlas în Arhiva fără frontiere

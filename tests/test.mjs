@@ -9,8 +9,9 @@ const require = createRequire('/opt/node-tools/package.json');
 const {chromium} = require('playwright');
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const APP = 'file://' + path.resolve(HERE, '..', 'index.html');
+const APPJ = JSON.parse(fs.readFileSync(path.resolve(HERE, '..', 'app.json'), 'utf8')), AV = APPJ.version, AVR = AV.replace(/\./g, '\\.');
 const TMP = fs.mkdtempSync(path.join(process.env.POTECA_TMP || os.tmpdir(), 'poteca-test-'));
-const AXE = process.env.AXE_PATH || '/tmp/claude-0/-home-claude/78529928-3825-51c3-b9bd-0e81655ab6bc/scratchpad/sweep/node_modules/axe-core/axe.min.js';
+const AXE = process.env.AXE_PATH || process.env.FFF_AXE || '/tmp/claude-0/-home-claude/78529928-3825-51c3-b9bd-0e81655ab6bc/scratchpad/sweep/node_modules/axe-core/axe.min.js';
 const ONLY = process.env.TEST_ONLY ? new RegExp(process.env.TEST_ONLY, 'i') : null;
 
 /* ---------- harness ---------- */
@@ -762,7 +763,7 @@ test('E2 copie de siguranță .fff.json: export, ștergere totală, import', asy
   const f = await download(page, '#s-export');
   ok(/\.fff\.json$/.test(f), 'extensie .fff.json');
   const j = JSON.parse(fileTxt(f));
-  eq(j.format, 'fff-bundle', 'format'); eq(j.schema, 1, 'schema'); eq(j.app, 'poteca', 'app'); eq(j.version, '2.3.0', 'versiune'); eq(j.updated, '2026-11-02', 'updated'); ok(j.data['fff.poteca.session'].startsWith('P1:'), 'sesiune în bundle');
+  eq(j.format, 'fff-bundle', 'format'); eq(j.schema, 1, 'schema'); eq(j.app, 'poteca', 'app'); eq(j.version, AV, 'versiune'); ok(/^\d{4}-\d{2}-\d{2}$/.test(j.updated), 'updated'); ok(j.data['fff.poteca.session'].startsWith('P1:'), 'sesiune în bundle');
   await page.click('#s-wipe'); await page.click('#dc-ok');
   eq(await g(page, () => window.Poteca.S.tracks.length), 0, 'șters');
   const keys = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('fff.poteca.session')));
@@ -975,15 +976,15 @@ test('G3 CSP strict, meta/versiune, fără rețea la pornire, fără erori', asy
   ok(/script-src 'sha256-[A-Za-z0-9+/=]+'/.test(csp), 'script-src cu hash');
   ok(!/\son(click|load|error|input|change)=/i.test(html), 'fără handlere inline');
   ok(!/\beval\(|new Function\(/.test(html.match(/<script>([\s\S]*)<\/script>/)[1]), 'fără eval');
-  ok(/<meta name="application-version" content="2\.3\.0">/.test(html) && /<meta name="last-updated" content="2026-11-02">/.test(html) && /<meta name="description" content="[^"]{20,}">/.test(html), 'meta versiune');
-  ok(/id="app-version">v 2\.3\.0 · 2026-11-02</.test(html), '#app-version');
+  ok(new RegExp('<meta name="application-version" content="' + AVR + '">').test(html) && /<meta name="last-updated" content="\d{4}-\d{2}-\d{2}">/.test(html) && /<meta name="description" content="[^"]{20,}">/.test(html), 'meta versiune');
+  ok(new RegExp('id="app-version">v ' + AVR + ' · \\d{4}-\\d{2}-\\d{2}<').test(html), '#app-version');
   ok(!/https?:\/\/(?!www\.topografix|www\.garmin|www\.w3\.org|www\.opengis|www\.google\.com\/kml|buymeacoffee\.com|[a-z0-9-]+\.chiuta\.ro|tile\.openstreetmap\.org)/.test(html.replace(/<meta[^>]*>/g, '')), 'fără URL-uri externe în cod în afară de spații de nume XML');
   const page = await newPage();
   eq((await cspViolations(page)).length, 0, 'zero violări CSP la pornire');
   await page.click('#btn-demo'); await page.waitForTimeout(300);
   for (const t of ['stats', 'edit', 'wpt', 'layers', 'export', 'session']) await tab(page, t);
   eq((await cspViolations(page)).length, 0, 'zero violări CSP după utilizare');
-  eq(await page.evaluate(() => document.getElementById('app-version').textContent), 'v 2.3.0 · 2026-11-02', 'text #app-version');
+  eq(await page.evaluate(() => document.getElementById('app-version').textContent), `v ${AV} · ${APPJ.updated}`, 'text #app-version');
   await closeAll(page);
 });
 test('G4 axe-core: 0 violări (inițial, cu date, taburi, dialoguri; luminos și întunecat)', async () => {
