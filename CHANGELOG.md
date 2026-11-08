@@ -2,6 +2,10 @@
 
 Format: [SemVer](https://semver.org/lang/ro/) MAJOR.MINOR.PATCH.
 
+## 2.3.5 — 2026-11-08
+
+Previzualizarea simplificării arată și variația distanței și a urcării față de traseul original (calculată pe o copie, fără a modifica traseul); cheie nouă `s_delta` în 8 limbi.
+
 ## 2.3.2 — 2026-11-03
 
 - Corectat: constanta de versiune din cod (GPX `creator`, filigran pe hartă, raport) era 2.3.0; urmează acum `app.json`.

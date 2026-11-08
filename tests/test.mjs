@@ -483,6 +483,7 @@ test('C3 simplificare Douglas–Peucker: număr rezultat, formă în toleranță
   const label = await page.locator('#s-count').innerText();
   const m = label.match(/(\d+) din (\d+)/); const predicted = +m[1];
   ok(predicted < 20000 && predicted > 50, 'număr previzionat: ' + label);
+  ok(/Distanță: [−+±][\d.,]+ (km|m) \([−+±]?-?[\d.]+%\); urcare: /.test(label), 'variația distanței și a urcării afișată: ' + label);
   await page.click('#e-simpl');
   const simp = await trackArrays(page);
   eq(simp.n, predicted, 'numărul rezultat = cel anunțat');
