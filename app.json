@@ -20,16 +20,17 @@
     "indexedDB",
     "localStorage",
     "Web Crypto",
+    "WebGL",
     "BroadcastChannel"
   ],
   "storageKeys": [],
-  "sizeBytes": 754758,
-  "sha256": "ac7e70a2d4c1faca93bcb94711e60d39967e242ec7b5e98447c1d2c22c544960",
+  "sizeBytes": 806398,
+  "sha256": "9f39a693eff9cc90d4c9366de4ff513d94370849e27ed4a9ddc2d81c709516b8",
   "csp": {
     "present": true,
     "directives": {
       "default-src": "'none'",
-      "script-src": "sha256×7",
+      "script-src": "sha256×8",
       "style-src": "'unsafe-inline'",
       "img-src": "'self' data: blob: https://tile.openstreetmap.org",
       "media-src": "data: blob:",
